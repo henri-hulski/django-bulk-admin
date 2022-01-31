@@ -1,10 +1,7 @@
-from __future__ import unicode_literals
-
 from django.test import TestCase
 from django.contrib.admin.sites import site as admin_site
 from django.contrib.auth.models import Permission, User
 from django.urls import reverse
-from django.utils import six
 from io import BytesIO
 
 from bulk_admin.admin import BulkInlineModelAdmin
@@ -16,14 +13,14 @@ import sys
 class BulkTests(TestCase):
 
     def setUp(self):
-        self.bulk_url = reverse('admin:{}_{}_bulk'.format(Image._meta.app_label, Image._meta.model_name))
-        self.changelist_url = reverse('admin:{}_{}_changelist'.format(Image._meta.app_label, Image._meta.model_name))
-        self.add_url = reverse('admin:{}_{}_add'.format(Image._meta.app_label, Image._meta.model_name))
+        self.bulk_url = reverse(f'admin:{Image._meta.app_label}_{Image._meta.model_name}_bulk')
+        self.changelist_url = reverse(f'admin:{Image._meta.app_label}_{Image._meta.model_name}_changelist')
+        self.add_url = reverse(f'admin:{Image._meta.app_label}_{Image._meta.model_name}_add')
         self.index_url = reverse('admin:index')
 
-        self.add_permission = Permission.objects.get(codename='add_{}'.format(Image._meta.model_name))
-        self.change_permission = Permission.objects.get(codename='change_{}'.format(Image._meta.model_name))
-        self.delete_permission = Permission.objects.get(codename='delete_{}'.format(Image._meta.model_name))
+        self.add_permission = Permission.objects.get(codename=f'add_{Image._meta.model_name}')
+        self.change_permission = Permission.objects.get(codename=f'change_{Image._meta.model_name}')
+        self.delete_permission = Permission.objects.get(codename=f'delete_{Image._meta.model_name}')
 
         self.user = User.objects.create_user('grill', 'ruben@grill.de', 'grill')
         self.user.user_permissions.add(self.add_permission)
@@ -45,12 +42,12 @@ class BulkTests(TestCase):
         }
 
         for index, obj in enumerate(changed_objects):
-            for name, value in six.iteritems(obj):
-                payload['form-{index}-{name}'.format(index=index, name=name)] = value
+            for name, value in obj.items():
+                payload[f'form-{index}-{name}'] = value
 
         for index, obj in enumerate(new_objects, len(changed_objects)):
-            for name, value in six.iteritems(obj):
-                payload['form-{index}-{name}'.format(index=index, name=name)] = value
+            for name, value in obj.items():
+                payload[f'form-{index}-{name}'] = value
 
         payload.update(extra)
 
@@ -60,7 +57,7 @@ class BulkTests(TestCase):
         payload = {
             'form-TOTAL_FORMS': len(files),
             'form-INITIAL_FORMS': 0,
-            'form-{}'.format(field): files,
+            f'form-{field}': files,
         }
 
         payload.update(extra)
@@ -72,7 +69,7 @@ class BulkTests(TestCase):
         # Happens when messages are used and messages cookie comes before sessionid cookie and contains square brackets.
         # See https://bugs.python.org/issue22931
         fetch_redirect_response = False if sys.version_info >= (3, 2) and sys.version_info < (3, 3) else True
-        super(BulkTests, self).assertRedirects(response, expected_url, fetch_redirect_response=fetch_redirect_response)
+        super().assertRedirects(response, expected_url, fetch_redirect_response=fetch_redirect_response)
 
     def assertImagesEqual(self, qs, images, ordered=True, msg=None):
         def transform_to_dict(obj):
@@ -93,7 +90,7 @@ class BulkTests(TestCase):
                     pass
                 values.append(image)
 
-        return super(BulkTests, self).assertQuerysetEqual(qs, values, transform_to_dict, ordered, msg)
+        return super().assertQuerysetEqual(qs, values, transform_to_dict, ordered, msg)
 
     def getTestQueryset(self):
         return Image.objects.exclude(title__startswith='preexisting')
@@ -111,7 +108,7 @@ class BulkTests(TestCase):
 
         image = Image.objects.create(title='foo')
 
-        response = self.client.get('{}?pks={}'.format(self.bulk_url, image.pk))
+        response = self.client.get(f'{self.bulk_url}?pks={image.pk}')
 
         self.assertEqual(response.status_code, 200)
         self.assertImagesEqual(self.getResponseQueryset(response), [image])
@@ -121,7 +118,7 @@ class BulkTests(TestCase):
 
         image = Image.objects.create(title='foo')
 
-        response = self.client.get('{}?pks={}'.format(self.bulk_url, image.pk))
+        response = self.client.get(f'{self.bulk_url}?pks={image.pk}')
 
         self.assertEqual(response.status_code, 200)
         self.assertImagesEqual(self.getResponseQueryset(response), [])
@@ -131,7 +128,7 @@ class BulkTests(TestCase):
 
         response = self.client.get(self.bulk_url)
 
-        self.assertRedirects(response, '/admin/login/?next={}'.format(self.bulk_url))
+        self.assertRedirects(response, f'/admin/login/?next={self.bulk_url}')
 
     def test_add_image_and_save(self):
         images = [{'title': 'foo'}]
@@ -298,5 +295,5 @@ class BulkTests(TestCase):
             'but was used inside a ModelAdmin with model Image'
         )
 
-        with self.assertRaisesRegexp(Exception, error):
+        with self.assertRaisesRegex(Exception, error):
             ImageInline(Image, admin_site)

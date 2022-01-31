@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from collections import OrderedDict
 from django import forms
 from django.contrib import admin, messages
@@ -39,25 +37,25 @@ class BulkModelAdmin(admin.ModelAdmin):
     change_form_template = None
 
     def __init__(self, *args, **kwargs):
-        super(BulkModelAdmin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         opts = self.model._meta
         app_label = opts.app_label
 
         self.change_list_template = self.change_list_template or [
-            'bulk_admin/%s/%s/bulk_change_list.html' % (app_label, opts.model_name),
+            f'bulk_admin/{app_label}/{opts.model_name}/bulk_change_list.html',
             'bulk_admin/%s/bulk_change_list.html' % app_label,
             'bulk_admin/bulk_change_list.html'
         ]
 
         self.add_form_template = self.add_form_template or [
-            'bulk_admin/%s/%s/bulk_change_form.html' % (app_label, opts.model_name),
+            f'bulk_admin/{app_label}/{opts.model_name}/bulk_change_form.html',
             'bulk_admin/%s/bulk_change_form.html' % app_label,
             'bulk_admin/bulk_change_form.html'
         ]
 
         self.change_form_template = self.change_form_template or [
-            'bulk_admin/%s/%s/bulk_change_form.html' % (app_label, opts.model_name),
+            f'bulk_admin/{app_label}/{opts.model_name}/bulk_change_form.html',
             'bulk_admin/%s/bulk_change_form.html' % app_label,
             'bulk_admin/bulk_change_form.html'
         ]
@@ -72,7 +70,7 @@ class BulkModelAdmin(admin.ModelAdmin):
 
         info = self.model._meta.app_label, self.model._meta.model_name
 
-        urlpatterns = super(BulkModelAdmin, self).get_urls()
+        urlpatterns = super().get_urls()
         urlpatterns.insert(0, re_path(r'^bulk/$', wrap(self.bulk_view), name='%s_%s_bulk' % info))
 
         return urlpatterns
@@ -173,7 +171,7 @@ class BulkModelAdmin(admin.ModelAdmin):
         if formset.is_bound:
             errors.extend(formset.non_form_errors())
             for formset_errors in formset.errors:
-                errors.extend(list(iter(formset_errors.values())))
+                errors.extend(list(formset_errors.values()))
 
         context =  self.admin_site.each_context(request)
         context.update({
@@ -209,7 +207,7 @@ class BulkModelAdmin(admin.ModelAdmin):
         elif '_addanother' in request.POST:
             msg = _('The %(name_plural)s were bulk added successfully. You may add another %(name)s below.') % msg_dict
             self.message_user(request, msg, messages.SUCCESS)
-            redirect_url = reverse('admin:%s_%s_add' % (opts.app_label, opts.model_name), current_app=self.admin_site.name)
+            redirect_url = reverse(f'admin:{opts.app_label}_{opts.model_name}_add', current_app=self.admin_site.name)
             redirect_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, redirect_url)
             return HttpResponseRedirect(redirect_url)
 
@@ -243,7 +241,7 @@ class BulkModelAdmin(admin.ModelAdmin):
         to_python = pk_field.to_python
 
         for index in range(management_form.cleaned_data[INITIAL_FORM_COUNT]):
-            pk_key = '{}-{}-{}'.format(prefix, index, pk_name)
+            pk_key = f'{prefix}-{index}-{pk_name}'
             pk = request.POST[pk_key]
             pk = to_python(pk)
             pk_list.append(pk)
@@ -262,16 +260,16 @@ class BulkModelAdmin(admin.ModelAdmin):
                 field_name = match.group(2)
 
                 for index, field_file in enumerate(field_files):
-                    files['{}-{}-{}'.format(prefix, index, field_name)] = field_file
+                    files[f'{prefix}-{index}-{field_name}'] = field_file
 
                     form_data_for_file = self.generate_data_for_file(request, field_name, field_file, index)
 
                     if form_data_for_file:
                         force_continue = True
                         post.update({
-                            '{}-{}-{}'.format(prefix, index, name): value
+                            f'{prefix}-{index}-{name}': value
                             for name, value
-                            in iter(form_data_for_file.items())
+                            in form_data_for_file.items()
                         })
 
         return post, files, force_continue
@@ -290,7 +288,7 @@ class BulkModelAdmin(admin.ModelAdmin):
     def get_actions(self, request):
         if IS_POPUP_VAR in request.GET:
             return OrderedDict(select_related_action=self.get_action('select_related_action'))
-        return super(BulkModelAdmin, self).get_actions(request)
+        return super().get_actions(request)
 
     def get_bulk_inline(self, request):
         bulk_inline = self.bulk_inline or TabularBulkInlineModelAdmin
@@ -309,7 +307,7 @@ class BulkModelAdmin(admin.ModelAdmin):
 
     @property
     def media(self):
-        media = super(BulkModelAdmin, self).media
+        media = super().media
         media.add_js([static('bulk_admin/js/bulk.js')])
 
         return media
@@ -324,7 +322,7 @@ class BulkModelAdmin(admin.ModelAdmin):
         opts = model._meta
 
         selected = queryset.values_list('pk', flat=True)
-        redirect_url = reverse('admin:%s_%s_bulk' % (opts.app_label, opts.model_name), current_app=self.admin_site.name)
+        redirect_url = reverse(f'admin:{opts.app_label}_{opts.model_name}_bulk', current_app=self.admin_site.name)
 
         return HttpResponseRedirect('{}?pks={}'.format(redirect_url, ','.join(selected)))
 
@@ -346,7 +344,7 @@ class BulkInlineModelAdmin(InlineModelAdmin):
                 .format(self.__class__.__name__, self.model.__name__, parent_model.__name__)
             )
 
-        super(BulkInlineModelAdmin, self).__init__(parent_model=None, admin_site=admin_site)
+        super().__init__(parent_model=None, admin_site=admin_site)
 
     def get_formset(self, request, obj=None, **kwargs):
         if 'fields' in kwargs:
@@ -414,7 +412,7 @@ class BulkInlineModelAdmin(InlineModelAdmin):
                         raise ValidationError(msg, code='deleting_protected', params=params)
 
             def is_valid(self):
-                result = super(DeleteProtectedModelForm, self).is_valid()
+                result = super().is_valid()
                 self.hand_clean_DELETE()
                 return result
 
