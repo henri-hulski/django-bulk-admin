@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-bulk-admin',
-    version='0.1.1',
+    version='1.0.0',
     packages=find_packages(exclude=('example_project*', 'screenshots',)),
     include_package_data=True,
     license='BSD',
@@ -18,8 +18,10 @@ setup(
     url='https://github.com/purelabs/django-bulk-admin',
     author='Ruben Grill',
     author_email='ruben.grill@gmail.com',
+    maintainer='Henri Hulski',
+    maintainer_email='henri@yacoma.it',
     install_requires=[
-        'Django>=1.11',
+        'Django>=3.0',
     ],
     classifiers=[
         'Environment :: Web Environment',
@@ -28,13 +30,11 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
 )

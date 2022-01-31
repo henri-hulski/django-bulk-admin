@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.0.0
+-----
+
+* Supports Django 3 and 4. Credits to James Lao (GitHub: @jameslao).
+
 0.1.1
 -----
 
