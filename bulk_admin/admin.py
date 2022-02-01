@@ -227,7 +227,7 @@ class BulkModelAdmin(admin.ModelAdmin):
         else:
             attr = opts.pk.attname
         values = [obj.serializable_value(attr) for obj in objects]
-        media = forms.Media(js=[static('bulk_admin/js/bulk-related.js')])
+        media = forms.Media(js=['bulk_admin/js/bulk-related.js'])
         return SimpleTemplateResponse('bulk_admin/bulk_popup_response.html', {
             'values': values,
             'objects': objects,
@@ -308,7 +308,7 @@ class BulkModelAdmin(admin.ModelAdmin):
     @property
     def media(self):
         media = super().media
-        media.add_js([static('bulk_admin/js/bulk.js')])
+        media += forms.Media(js=['bulk_admin/js/bulk.js'])
 
         return media
 
