@@ -12,7 +12,7 @@ from django.forms.models import modelform_defines_fields, modelformset_factory, 
 from django.forms.utils import ErrorList
 from django.http import HttpResponseRedirect
 from django.template.response import SimpleTemplateResponse
-from django.urls import reverse
+from django.urls import path, reverse
 from django.utils.encoding import force_str
 from django.utils.text import get_text_list
 from django.utils.translation import gettext as _, gettext_lazy
@@ -61,8 +61,6 @@ class BulkModelAdmin(admin.ModelAdmin):
         ]
 
     def get_urls(self):
-        from django.urls import re_path
-
         def wrap(view):
             def wrapper(*args, **kwargs):
                 return self.admin_site.admin_view(view)(*args, **kwargs)
@@ -71,7 +69,7 @@ class BulkModelAdmin(admin.ModelAdmin):
         info = self.model._meta.app_label, self.model._meta.model_name
 
         urlpatterns = super().get_urls()
-        urlpatterns.insert(0, re_path(r'^bulk/$', wrap(self.bulk_view), name='%s_%s_bulk' % info))
+        urlpatterns.insert(0, path('bulk/', wrap(self.bulk_view), name='%s_%s_bulk' % info))
 
         return urlpatterns
 
