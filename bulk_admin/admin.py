@@ -324,7 +324,7 @@ class BulkModelAdmin(admin.ModelAdmin):
         selected = queryset.values_list('pk', flat=True)
         redirect_url = reverse(f'admin:{opts.app_label}_{opts.model_name}_bulk', current_app=self.admin_site.name)
 
-        return HttpResponseRedirect('{}?pks={}'.format(redirect_url, ','.join(selected)))
+        return HttpResponseRedirect('{}?pks={}'.format(redirect_url, ','.join(map(str, selected))))
 
     bulk_edit_action.short_description = gettext_lazy('Bulk edit')
 
