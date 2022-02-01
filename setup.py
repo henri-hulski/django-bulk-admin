@@ -20,9 +20,7 @@ setup(
     author_email='ruben.grill@gmail.com',
     maintainer='Henri Hulski',
     maintainer_email='henri@yacoma.it',
-    install_requires=[
-        'Django>=3.0',
-    ],
+    install_requires=['Django>=3.2'],
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
