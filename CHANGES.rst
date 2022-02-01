@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.0.1
+-----
+
+* Fix bulk edit and some other minor bugs.
+
 1.0.0
 -----
 
