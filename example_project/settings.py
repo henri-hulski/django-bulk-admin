@@ -54,9 +54,6 @@ MIDDLEWARE = (
 
 ROOT_URLCONF = 'example_project.urls'
 
-if django.VERSION < (1, 8):
-    TEMPLATE_DEBUG = True
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

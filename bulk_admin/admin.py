@@ -279,7 +279,7 @@ class BulkModelAdmin(admin.ModelAdmin):
         if self.bulk_generate_unique_values is not None:
             return self.bulk_generate_unique_values
 
-        fields = self.model._meta.get_fields() if django.VERSION >= (1, 8) else self.model._meta.fields
+        fields = self.model._meta.get_fields()
 
         return list(field.name for field in fields if not getattr(field, 'blank', True))
 
@@ -299,7 +299,7 @@ class BulkModelAdmin(admin.ModelAdmin):
         if self.bulk_upload_fields is not None:
             return [opts.get_field(field) for field in self.bulk_upload_fields]
 
-        fields = opts.get_fields() if django.VERSION >= (1, 8) else opts.fields
+        fields = opts.get_fields()
 
         return [field for field in fields if hasattr(field, 'upload_to')]
 
