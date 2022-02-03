@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.0.2
+-----
+
+* Fix javascript injection for upload indicator and some code refactor.
+
 1.0.1
 -----
 
