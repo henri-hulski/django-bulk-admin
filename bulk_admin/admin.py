@@ -36,6 +36,9 @@ class BulkModelAdmin(admin.ModelAdmin):
     add_form_template = None
     change_form_template = None
 
+    class Media:
+        js = ("admin/js/jquery.init.js", "bulk_admin/js/bulk.js",)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -225,7 +228,7 @@ class BulkModelAdmin(admin.ModelAdmin):
         else:
             attr = opts.pk.attname
         values = [obj.serializable_value(attr) for obj in objects]
-        media = forms.Media(js=['bulk_admin/js/bulk-related.js'])
+        media = forms.Media(js=['admin/js/jquery.init.js', 'bulk_admin/js/bulk-related.js'])
         return SimpleTemplateResponse('bulk_admin/bulk_popup_response.html', {
             'values': values,
             'objects': objects,
@@ -302,13 +305,6 @@ class BulkModelAdmin(admin.ModelAdmin):
         fields = opts.get_fields()
 
         return [field for field in fields if hasattr(field, 'upload_to')]
-
-    @property
-    def media(self):
-        media = super().media
-        media += forms.Media(js=['bulk_admin/js/bulk.js'])
-
-        return media
 
     def select_related_action(self, request, queryset):
         return self.response_bulk_popup(request, queryset)
