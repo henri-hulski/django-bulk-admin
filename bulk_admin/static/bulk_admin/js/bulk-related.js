@@ -24,7 +24,7 @@
                 }
             }
             // Trigger a change event to update related links if required.
-            openerWindow.django.jQuery(elem).trigger('change');
+            openerWindow.$(elem).trigger('change');
         } else {
             var toId = name + "_to";
 
@@ -38,4 +38,4 @@
 
     window.dismissAddRelatedObjectPopup = dismissAddRelatedObjectPopup;
 
-})();
+})(django.jQuery);
