@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.0.3
+-----
+
+* Fix bulk select.
+
 1.0.2
 -----
 
