@@ -24,7 +24,7 @@
                 }
             }
             // Trigger a change event to update related links if required.
-            openerWindow.$(elem).trigger('change');
+            $(elem).trigger('change');
         } else {
             var toId = name + "_to";
 
